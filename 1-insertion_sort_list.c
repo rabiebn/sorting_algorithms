@@ -3,25 +3,33 @@
 /**
  * swap_list - swaps position of two nodes in a doubly linked list.
  *
+ * @list: head of the list;
  * @node_a: pointer to the 1st node to swap;
  * @node_b: pointer to the 2nd node to swap.
 */
-void swap_list(listint_t *node1, listint_t *node2)
+void swap_nodes(listint_t **list, listint_t *node1, listint_t *node2)
 {
-    listint_t *next, *prev;
+    if (!node1->prev)
+        node2->prev = NULL;
+    else
+    {
+        node1->prev->next = node2;
+        node2->prev = node1->prev;
+    }
 
-
-    next = node2->next;
-    prev = node1->prev;
-
-    node2->prev = prev;
-    node1->next = next;
-
-    prev->next = node2;
-    next->prev = node1;
+    if (!node2->next)
+        node1->next = NULL;
+    else
+    {
+        node2->next->prev = node1;
+        node1->next = node2->next;
+    }
 
     node1->prev = node2;
     node2->next = node1;
+
+    if (!node2->prev)
+        *list = node2;
 }
 
 /**
@@ -31,41 +39,33 @@ void swap_list(listint_t *node1, listint_t *node2)
 */
 void insertion_sort_list(listint_t **list)
 {
-    listint_t *tmp, *tmp2;
-    bool swapped;
+    listint_t *curr, *dummy, *tmp;
 
     if (!list)
         return;
     
-    tmp = *list;
-    while (tmp->next)
+    curr = *list;
+    tmp = (*list)->next;
+    while (tmp)
     {
-        swapped = false;
-        if (tmp->n > tmp->next->n)
+        if (curr->n > tmp->n)
         {
-            swap_list(tmp, tmp->next);
+            swap_nodes(list, curr, tmp);
             print_list(*list);
-            swapped = true;
-        }
-        if (swapped)
-        {
-            tmp2 = tmp;
-            while (tmp2->prev)
+            printf("----\n");
+            dummy = tmp->prev;
+            while (dummy && (dummy->n > tmp->n))
             {
-                swapped = false;
-                if (tmp2->prev->n > tmp2->n)
-                {
-                    swap_list(tmp2->prev, tmp2);
-                    print_list(*list);
-                    swapped = true;
-                }
-                if (!swapped)
-                    break;
-                tmp2 = tmp2->prev;
+                swap_nodes(list, dummy, tmp);
+                print_list(*list);
+                dummy = tmp->prev;
             }
-            if (!tmp2->prev)
-                *list = tmp2;
+            tmp = curr->next;
         }
-        tmp = tmp->next;
+        else
+        {
+            tmp = tmp->next;
+            curr = curr->next;
+        }
     }
 }
