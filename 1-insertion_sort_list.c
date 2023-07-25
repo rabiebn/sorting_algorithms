@@ -41,7 +41,7 @@ void insertion_sort_list(listint_t **list)
 {
 	listint_t *curr, *dummy, *tmp;
 
-	if (!list)
+	if (!list || !(*list) || !(*list)->next)
 		return;
 
 	curr = *list;
@@ -52,7 +52,6 @@ void insertion_sort_list(listint_t **list)
 		{
 			swap_nodes(list, curr, tmp);
 			print_list(*list);
-			printf("----\n");
 			dummy = tmp->prev;
 			while (dummy && (dummy->n > tmp->n))
 			{
